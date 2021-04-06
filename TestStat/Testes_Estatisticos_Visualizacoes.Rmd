@@ -84,7 +84,7 @@ Antes de definir a melhor forma de abordagem do conteúdo deste material, sugiro
 
 ## Escolhendo testes e visualizações
 
-Agora nós vamos definir algumas estratégias para definir as visualizações e os testes apropriados para cada problema abordado. Isso decorre muito da natureza da variável que se é trabalhada e o que se deseja descobrir, então além desta pequena estratégia, podem existir diversas outras maneiras de abordar uma situação problema. 
+Agora nós vamos falar de algumas estratégias para definir as visualizações e os testes apropriados para cada problema abordado. Isso decorre muito da natureza da variável que se é trabalhada e o que se deseja descobrir, então além desta pequena estratégia, podem existir diversas outras maneiras de abordar uma situação problema. 
 
 #### Variável Quantitativa versus Variável Quantitativa
 
@@ -94,7 +94,7 @@ Nesta circunstância, vamos tratar duas variáveis quantitativas (sejam contínu
 
 A análise de correlação mede o grau de relação entre duas variáveis numéricas. Os métodos mais utilizados são os que geram os coeficientes de correlação de Pearson e Spearmam. O primeiro serve para variáveis numéricas que possuam uma relação linear, já o segundo serve para variáveis que possuem relações não lineares e para variáveis qualitativas ordinais que podem assumir valores numéricos (ou seja, viram variáveis numéricas).
 
-  * **Coeficiente de correlação de Pearson**: 
+  **Coeficiente de correlação de Pearson**: 
 
 Para este exemplo, vamos utilizar algumas variáveis da base Mtcars para gerar o coeficiente de correlação de Pearson:
 
@@ -107,17 +107,17 @@ cor(mtcars$wt, mtcars$hp)
 
 ```
 
-Na análise acima, podemos verificar que os graus de correlação entre dos dois cruzamentos que fizemos: a potência bruta (hp) possui fraca correlação negativa com o número de marchas (gear); enquanto que ao peso (wt) possui correlação forte positiva com a pot6encia bruta. Mesmo com toda a análise ainda existe uma etapa da análise de correlação que muitas vezes é esquecida e não menos importante: a significância dos coeficiente.
+Na análise acima, podemos verificar os graus de correlação entre dos dois cruzamentos: a potência bruta (hp) possui fraca correlação negativa com o número de marchas (gear); enquanto que ao peso (wt) possui correlação forte positiva com a potência bruta. Mesmo com toda a técnica aplicada ainda existe uma etapa da análise de correlação que muitas vezes é esquecida e não menos importante: a significância dos coeficiente.
 
-  * **A significância do coeficiente de correlação de Pearson**: Lembremos que o coeficiente de Pearson mede o grau de relação linear entre duas variáveis, sendo assim, podemos ter graus de correlações elevados, mas não significantes para a linearidade. Para isso, faremos o teste de hipótese para saber se o coficiente de correlação de Pearson é significante para um nível descritivo de 5%. Nossas hipóteses são:
+  **A significância do coeficiente de correlação de Pearson**: Lembremos que o coeficiente de Pearson mede o grau de relação linear entre duas variáveis, sendo assim, podemos ter graus de correlações elevados, mas não significantes para a linearidade. Para isso, faremos o teste de hipótese a fim de sabermos se o coficiente de correlação de Pearson é significante para um nível descritivo de 5%. Nossas hipóteses são:
   
   $H_0$: Não existe correlação linear
   
   $H_1:$ Existe correlação linear
 
-*Obs: essa hipótese para linearidade é específica para correlação de Pearson, dado que os outros métodos metem a correlação não linear também.*
+*Obs: essa hipótese para linearidade é específica para correlação de Pearson, dado que os outros métodos medem a correlação não linear também.*
 
-Selecionamos alguns exemplos específicos para testar as hipóteses acima:
+Selecionamos os mesmos exemplos da análise anterior para testar as hipóteses acima:
 
 ```{r, echo=TRUE, fig.align='center'}
 # hp versus gear
@@ -127,7 +127,7 @@ cor.test(mtcars$hp, mtcars$gear)
 cor.test(mtcars$wt, mtcars$hp)
 ```
 
-Como nós podemos verificar, no exemplo acima, o coeficiente de correlação de Pearson para as variáveis `hp`e `gear`, não é significativo ao nível de 95% de confiança, dado que o seu p-valor é 0,493 (>0,05), isso nos faz não rejeitar a hipóteses nula ($H_0$), em que afirma que não existe correlação entre as variáveis. Já  para as variáveis `wt` e `hp`, o coeficiente de correlação de Pearson é significativo ao nível de confianca de 95% (p-valor > 0,05), e isso nos faz afirmar que existe correlação entre as variáveis (rejeita a hipótese nula $H_0$).
+Como nós podemos verificar, no exemplo acima, o coeficiente de correlação de Pearson para as variáveis `hp`e `gear` não é significativo ao nível de 95% de confiança, dado que o seu p-valor é 0,493 (>0,05), isso nos faz não rejeitar a hipóteses nula ($H_0$), em que afirma que não existe correlação entre as variáveis. Já  para as variáveis `wt` e `hp`, o coeficiente de correlação de Pearson é significativo ao nível de confianca de 95% (p-valor > 0,05), e isso nos faz afirmar que existe correlação entre as variáveis (rejeita a hipótese nula $H_0$).
 
 Porém, uma estratégia ótima para representar tanto o grau de correlação entre as variáveis quanto a significância desses coeficientes, se resolve com uma esta ferramenta visual bem bacana:
 
@@ -159,17 +159,48 @@ mtcars %>%
 Agora, não só enxergarmos o grau de correlação de cada variável, como também quais os coeficientes são significantes, dado que os que não são, foram retirados da visualização.
 
 
+
   - **Dispersão**: O gráfico de dispersão é um dos mais famosos para visualizar a relação entre duas variáveis numéricas. Sendo assim, vamos selecionar algumas relações para visualizarmos de acordo com os coeficiente de correlação de Pearson e suas significâncias que foram observados anteriormente:
 
 ```{r, echo=TRUE}
 
-  
+grafico_dispersao <- function(df, x, y, color){
+  ggplot2::ggplot(df,aes(x = {{x}}, y = {{y}}, color = {{color}})) +
+    ggplot2::geom_point() +
+      ggplot2::theme_minimal()
+}
+
+
+iris %>% 
+  grafico_dispersao(x = Sepal.Length, y = Petal.Length, color = "red")
 
 ```
 
+Neste gráfico de Dispersão, estou cruzando as informações da base de dados Íris, mais especificamente as variáveis comprimento da sépala e comprimento da pétala. Como já era de se esperar, o gráfico nos mostra uma relação linear positiva. Isso indica que quanto maior o comprimento da sépala, maior o comprimento da pétala. Mas, já com o aprendizado anterior, vamos calcular o coeficiente de correlação de Pearson e executar o teste de hipótese para saber se esse coeficiente é significante ao nível descritivo de 5%.
 
+```{r, echo=TRUE}
 
+cor(iris$Sepal.Length, iris$Petal.Length)
 
+cor.test(iris$Sepal.Length, iris$Petal.Length)$p.value
+
+```
+
+Como podemos observar, existe relação forte positiva e significante entre o comprimento da Sépala e o comprimento da Pétala ao nível descritivo de 5%.
+
+Tudo isso pode ser definido também, em um gráfico interessante da biblioteca do `ggplot`, onde já são feitos os devidos cáculos de correlação e a análise gráfica. De sobra, ainda nos traz o $R^2$, tendo mais um métrica para nossa análise.
+
+```{r, echo=TRUE}
+
+grafico_regressao <- function(df, x, y, color){
+  ggplot2::ggplot(df,aes(x = {{x}}, y = {{y}}, color = {{color}})) +
+    ggplot2::geom_smooth() +
+      ggplot2::theme_minimal()
+}
+
+iris %>% 
+grafico_regressao(x = Sepal.Length, y = Petal.Length, color = "red")
+```
 
 
 

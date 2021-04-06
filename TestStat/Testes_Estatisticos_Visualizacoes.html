@@ -2269,7 +2269,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 <div id="escolhendo-testes-e-visualizações" class="section level2">
 <h2>Escolhendo testes e visualizações</h2>
-<p>Agora nós vamos definir algumas estratégias para definir as visualizações e os testes apropriados para cada problema abordado. Isso decorre muito da natureza da variável que se é trabalhada e o que se deseja descobrir, então além desta pequena estratégia, podem existir diversas outras maneiras de abordar uma situação problema.</p>
+<p>Agora nós vamos falar de algumas estratégias para definir as visualizações e os testes apropriados para cada problema abordado. Isso decorre muito da natureza da variável que se é trabalhada e o que se deseja descobrir, então além desta pequena estratégia, podem existir diversas outras maneiras de abordar uma situação problema.</p>
 <div id="variável-quantitativa-versus-variável-quantitativa" class="section level4">
 <h4>Variável Quantitativa versus Variável Quantitativa</h4>
 <p>Nesta circunstância, vamos tratar duas variáveis quantitativas (sejam contínuas ou ordinais):</p>
@@ -2277,9 +2277,7 @@ document.addEventListener('DOMContentLoaded', function() {
 <li><strong>Análise de correlação</strong></li>
 </ul>
 <p>A análise de correlação mede o grau de relação entre duas variáveis numéricas. Os métodos mais utilizados são os que geram os coeficientes de correlação de Pearson e Spearmam. O primeiro serve para variáveis numéricas que possuam uma relação linear, já o segundo serve para variáveis que possuem relações não lineares e para variáveis qualitativas ordinais que podem assumir valores numéricos (ou seja, viram variáveis numéricas).</p>
-<ul>
-<li><strong>Coeficiente de correlação de Pearson</strong>:</li>
-</ul>
+<p><strong>Coeficiente de correlação de Pearson</strong>:</p>
 <p>Para este exemplo, vamos utilizar algumas variáveis da base Mtcars para gerar o coeficiente de correlação de Pearson:</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a><span class="co"># hp versus gear</span></span>
 <span id="cb5-2"><a href="#cb5-2"></a><span class="kw">cor</span>(mtcars<span class="op">$</span>hp, mtcars<span class="op">$</span>gear)</span></code></pre></div>
@@ -2287,14 +2285,12 @@ document.addEventListener('DOMContentLoaded', function() {
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a><span class="co"># wt versus disp</span></span>
 <span id="cb7-2"><a href="#cb7-2"></a><span class="kw">cor</span>(mtcars<span class="op">$</span>wt, mtcars<span class="op">$</span>hp)</span></code></pre></div>
 <pre><code>## [1] 0.6587479</code></pre>
-<p>Na análise acima, podemos verificar que os graus de correlação entre dos dois cruzamentos que fizemos: a potência bruta (hp) possui fraca correlação negativa com o número de marchas (gear); enquanto que ao peso (wt) possui correlação forte positiva com a pot6encia bruta. Mesmo com toda a análise ainda existe uma etapa da análise de correlação que muitas vezes é esquecida e não menos importante: a significância dos coeficiente.</p>
-<ul>
-<li><strong>A significância do coeficiente de correlação de Pearson</strong>: Lembremos que o coeficiente de Pearson mede o grau de relação linear entre duas variáveis, sendo assim, podemos ter graus de correlações elevados, mas não significantes para a linearidade. Para isso, faremos o teste de hipótese para saber se o coficiente de correlação de Pearson é significante para um nível descritivo de 5%. Nossas hipóteses são:</li>
-</ul>
+<p>Na análise acima, podemos verificar os graus de correlação entre dos dois cruzamentos: a potência bruta (hp) possui fraca correlação negativa com o número de marchas (gear); enquanto que ao peso (wt) possui correlação forte positiva com a potência bruta. Mesmo com toda a técnica aplicada ainda existe uma etapa da análise de correlação que muitas vezes é esquecida e não menos importante: a significância dos coeficiente.</p>
+<p><strong>A significância do coeficiente de correlação de Pearson</strong>: Lembremos que o coeficiente de Pearson mede o grau de relação linear entre duas variáveis, sendo assim, podemos ter graus de correlações elevados, mas não significantes para a linearidade. Para isso, faremos o teste de hipótese a fim de sabermos se o coficiente de correlação de Pearson é significante para um nível descritivo de 5%. Nossas hipóteses são:</p>
 <p><span class="math inline">\(H_0\)</span>: Não existe correlação linear</p>
 <p><span class="math inline">\(H_1:\)</span> Existe correlação linear</p>
-<p><em>Obs: essa hipótese para linearidade é específica para correlação de Pearson, dado que os outros métodos metem a correlação não linear também.</em></p>
-<p>Selecionamos alguns exemplos específicos para testar as hipóteses acima:</p>
+<p><em>Obs: essa hipótese para linearidade é específica para correlação de Pearson, dado que os outros métodos medem a correlação não linear também.</em></p>
+<p>Selecionamos os mesmos exemplos da análise anterior para testar as hipóteses acima:</p>
 <div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1"></a><span class="co"># hp versus gear</span></span>
 <span id="cb9-2"><a href="#cb9-2"></a><span class="kw">cor.test</span>(mtcars<span class="op">$</span>hp, mtcars<span class="op">$</span>gear)</span></code></pre></div>
 <pre><code>## 
@@ -2321,7 +2317,7 @@ document.addEventListener('DOMContentLoaded', function() {
 ## sample estimates:
 ##       cor 
 ## 0.6587479</code></pre>
-<p>Como nós podemos verificar, no exemplo acima, o coeficiente de correlação de Pearson para as variáveis <code>hp</code>e <code>gear</code>, não é significativo ao nível de 95% de confiança, dado que o seu p-valor é 0,493 (&gt;0,05), isso nos faz não rejeitar a hipóteses nula (<span class="math inline">\(H_0\)</span>), em que afirma que não existe correlação entre as variáveis. Já para as variáveis <code>wt</code> e <code>hp</code>, o coeficiente de correlação de Pearson é significativo ao nível de confianca de 95% (p-valor &gt; 0,05), e isso nos faz afirmar que existe correlação entre as variáveis (rejeita a hipótese nula <span class="math inline">\(H_0\)</span>).</p>
+<p>Como nós podemos verificar, no exemplo acima, o coeficiente de correlação de Pearson para as variáveis <code>hp</code>e <code>gear</code> não é significativo ao nível de 95% de confiança, dado que o seu p-valor é 0,493 (&gt;0,05), isso nos faz não rejeitar a hipóteses nula (<span class="math inline">\(H_0\)</span>), em que afirma que não existe correlação entre as variáveis. Já para as variáveis <code>wt</code> e <code>hp</code>, o coeficiente de correlação de Pearson é significativo ao nível de confianca de 95% (p-valor &gt; 0,05), e isso nos faz afirmar que existe correlação entre as variáveis (rejeita a hipótese nula <span class="math inline">\(H_0\)</span>).</p>
 <p>Porém, uma estratégia ótima para representar tanto o grau de correlação entre as variáveis quanto a significância desses coeficientes, se resolve com uma esta ferramenta visual bem bacana:</p>
 <div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1"></a>p.mat &lt;-<span class="st"> </span>mtcars <span class="op">%&gt;%</span><span class="st"> </span></span>
 <span id="cb13-2"><a href="#cb13-2"></a><span class="st">  </span><span class="kw">select</span>(<span class="kw">where</span>(is.numeric)) <span class="op">%&gt;%</span><span class="st">   </span></span>
