@@ -88,7 +88,7 @@ Agora nós vamos falar de algumas estratégias para definir as visualizações e
 
 #### Variável Quantitativa versus Variável Quantitativa
 
-Nesta circunstância, vamos tratar duas variáveis quantitativas (sejam contínuas ou ordinais):
+Nesta circunstância, vamos tratar duas variáveis quantitativas (sejam contínuas ou discretas):
   
 - **Análise de correlação** 
 
@@ -107,7 +107,7 @@ cor(mtcars$wt, mtcars$hp)
 
 ```
 
-Na análise acima, podemos verificar os graus de correlação entre dos dois cruzamentos: a potência bruta (hp) possui fraca correlação negativa com o número de marchas (gear); enquanto que ao peso (wt) possui correlação forte positiva com a potência bruta. Mesmo com toda a técnica aplicada ainda existe uma etapa da análise de correlação que muitas vezes é esquecida e não menos importante: a significância dos coeficiente.
+Na análise acima, podemos verificar os graus de correlação entre dos dois cruzamentos: a potência bruta (hp) possui fraca correlação negativa com o número de marchas (gear); enquanto que ao peso (wt) possui correlação forte positiva com a potência bruta (wt). Mesmo com toda a técnica aplicada ainda existe uma etapa da análise de correlação que muitas vezes é esquecida e não menos importante: a significância dos coeficiente.
 
   **A significância do coeficiente de correlação de Pearson**: Lembremos que o coeficiente de Pearson mede o grau de relação linear entre duas variáveis, sendo assim, podemos ter graus de correlações elevados, mas não significantes para a linearidade. Para isso, faremos o teste de hipótese a fim de sabermos se o coficiente de correlação de Pearson é significante para um nível descritivo de 5%. Nossas hipóteses são:
   
@@ -132,7 +132,8 @@ Como nós podemos verificar, no exemplo acima, o coeficiente de correlação de 
 Porém, uma estratégia ótima para representar tanto o grau de correlação entre as variáveis quanto a significância desses coeficientes, se resolve com uma esta ferramenta visual bem bacana:
 
 
-```{r, echo=TRUE, fig.align='center', warning=FALSE}
+```{r, echo=TRUE, fig.align='center', warning=FALSE, message=FALSE}
+# precisa do pacote rstatix
 p.mat <- mtcars %>% 
   select(where(is.numeric)) %>%   
     rstatix::cor_pmat() %>% as.data.frame()
@@ -140,6 +141,7 @@ p.mat <- mtcars %>%
 rownames(p.mat) <- p.mat$rowname
 p.mat <- p.mat[,-1]
 
+# precisa do pacote ggcorplot
 mtcars %>%
   select(where(is.numeric)) %>% 
     cor() %>%
@@ -158,7 +160,7 @@ mtcars %>%
 
 Agora, não só enxergarmos o grau de correlação de cada variável, como também quais os coeficientes são significantes, dado que os que não são, foram retirados da visualização.
 
-
+<br>
 
   - **Dispersão**: O gráfico de dispersão é um dos mais famosos para visualizar a relação entre duas variáveis numéricas. Sendo assim, vamos selecionar algumas relações para visualizarmos de acordo com os coeficiente de correlação de Pearson e suas significâncias que foram observados anteriormente:
 
@@ -188,19 +190,6 @@ cor.test(iris$Sepal.Length, iris$Petal.Length)$p.value
 
 Como podemos observar, existe relação forte positiva e significante entre o comprimento da Sépala e o comprimento da Pétala ao nível descritivo de 5%.
 
-Tudo isso pode ser definido também, em um gráfico interessante da biblioteca do `ggplot`, onde já são feitos os devidos cáculos de correlação e a análise gráfica. De sobra, ainda nos traz o $R^2$, tendo mais um métrica para nossa análise.
-
-```{r, echo=TRUE}
-
-grafico_regressao <- function(df, x, y, color){
-  ggplot2::ggplot(df,aes(x = {{x}}, y = {{y}}, color = {{color}})) +
-    ggplot2::geom_smooth() +
-      ggplot2::theme_minimal()
-}
-
-iris %>% 
-grafico_regressao(x = Sepal.Length, y = Petal.Length, color = "red")
-```
 
 
 
