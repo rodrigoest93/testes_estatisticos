@@ -1,0 +1,198 @@
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+---
+title: "Testes Estatísticos e Visualizações para o dia a dia"
+date: "15/03/2021"
+author: "Rodrigo Almeida Figueira"
+output:
+  rmdformats::robobook:
+    highlight: kate
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(patchwork)
+
+```
+
+## Motivação
+
+No nosso dia a dia de trabalho chegam diversas demandas, muitas delas complexas, cheias de desenvolvimentos e aplicações de técnicas, mas existem outras que são mais leves, pois requerem uma análise mais direta e prática. Neste material, tentarei abordar algumas opções de técnincas estatísticas e de vizualizações que nos respondem questionamentos simples, com um devido embasamento para nossas afirmações.
+
+## Ambientação à situação problema
+
+Vamos firmar aqui, alguns termos que serão utilizados neste material:
+
+- Hipótese: Será o "questionamento" que faremos para obtermos respostas
+
+- Teste de Hipótese: Será o teste que nos trará a resposta sobre nossos questionamentos
+
+- Nível descritivo: Será o valor que vamos comparar nossa estatística para rejeitar ou não rejeitar nossas hipóteses (mais conhecido como p-valor)
+
+## Bases de estudo utilizadas
+
+Para este material utilizarei algumas bases já bem famosas pela comunidade de ciência de dados. São estas:
+
+- Mtcars: informações de veículos
+
+- Auto: informações de veículos antigos
+
+- Iris: informações de plantas
+
+- Titanic: informações sobre a tripulação do naufrágio do Navio Titanic
+
+
+```{r, echo=TRUE}
+mtcars <- mtcars %>% 
+  mutate(
+    vs = ifelse(vs == 1, "straight", "V-shaped"),
+    am = ifelse(am == 1, "manual", "automatic")
+  )
+
+mtcars %>% head() %>% knitr::kable(align = "c")
+
+
+auto <- ISLR::Auto %>% 
+  mutate(
+    origin = ifelse(origin == 1, "American",
+                    ifelse(origin == 2, "European", "Japanese"))
+  )
+
+auto %>% head() %>% knitr::kable(align = "c")
+
+iris %>% head() %>% knitr::kable(align = "c")
+
+titanic <- titanic::titanic_train %>% 
+  mutate(
+    Survived = as.factor(Survived),
+    Pclass = as.factor(Pclass)
+  )
+titanic %>% head() %>% knitr::kable(align = "c")
+```
+
+
+## Relembrando os tipos de variáveis
+
+Antes de definir a melhor forma de abordagem do conteúdo deste material, sugiro uma breve revisão sobre os tipo de variáveis. Neste caso, vamos definir em quatro tipo bem rapidamente:
+
+- **Variáveis quantitativas**: São as variáveis numéricas
+  * **Discretas**: Numéricas que podem ser contadas e não admitem valores decimais (número de pessoas, quantidade de peças de um carro)
+  * **Contínuas**: Numéricas que admitem valores decimais (média de consumo de água, altura dos jogadores da NBA)
+
+- **Variáveis qualitativas**: São as variáveis não numéricas que atribuem características às observações
+  * **Nominais**: Características/Atributos que não possuem relação de nível entre suas classes (Marca do automóvel, área de atuação dos colaboradores de uma empresa)
+  * **Ordinais**: Características/Atributos que possuem relação de nível entre suas classes (Grau de Escolaridade, Faixa salarial)
+
+
+## Escolhendo testes e visualizações
+
+Agora nós vamos falar de algumas estratégias para definir as visualizações e os testes apropriados para cada problema abordado. Isso decorre muito da natureza da variável que se é trabalhada e o que se deseja descobrir, então além desta pequena estratégia, podem existir diversas outras maneiras de abordar uma situação problema. 
+
+#### Variável Quantitativa
+
+Para as variáveis quantitativas, temos alguns tipos de tratamentos ou vizualizações que podem nos dar alguns indicativos sobre o atributo que estamos trabalhando. Existem também técnicas para verificarmos a distribuição destas variáveis, mas acredito que isso seja mais específico para suposições que alguns testes estatísticos requerem (veremos isso posteriormente).
+
+No mais, acredito que gráficos como histogramas, boxplots e gráficos de densidade possam ajudar muito nas nossas análises univariadas de variáveis quantitativas:
+
+```{r, echo=TRUE, fig.align='center'}
+source("R/Functions.R")
+
+```
+
+
+
+#### Variável Quantitativa versus Variável Quantitativa
+
+Nesta circunstância, vamos tratar duas variáveis quantitativas (sejam contínuas ou discretas):
+  
+- **Análise de correlação** 
+
+A análise de correlação mede o grau de relação entre duas variáveis numéricas. Os métodos mais utilizados são os que geram os coeficientes de correlação de Pearson e Spearmam. O primeiro serve para variáveis numéricas que possuam uma relação linear, já o segundo serve para variáveis que possuem relações não lineares e para variáveis qualitativas ordinais que podem assumir valores numéricos (ou seja, viram variáveis numéricas).
+
+  **Coeficiente de correlação de Pearson**: 
+
+Para este exemplo, vamos utilizar algumas variáveis da base Mtcars para gerar o coeficiente de correlação de Pearson:
+
+```{r, echo=TRUE, fig.align='center'}
+# hp versus gear
+cor(mtcars$hp, mtcars$gear)
+
+# wt versus disp
+cor(mtcars$wt, mtcars$hp)
+
+```
+
+Na análise acima, podemos verificar os graus de correlação entre dos dois cruzamentos: a potência bruta (hp) possui fraca correlação negativa com o número de marchas (gear); enquanto que ao peso (wt) possui correlação forte positiva com a potência bruta (wt). Mesmo com toda a técnica aplicada ainda existe uma etapa da análise de correlação que muitas vezes é esquecida e não menos importante: a significância dos coeficiente.
+
+  **A significância do coeficiente de correlação de Pearson**: Lembremos que o coeficiente de Pearson mede o grau de relação linear entre duas variáveis, sendo assim, podemos ter graus de correlações elevados, mas não significantes para a linearidade. Para isso, faremos o teste de hipótese a fim de sabermos se o coficiente de correlação de Pearson é significante para um nível descritivo de 5%. Nossas hipóteses são:
+  
+  $H_0$: Não existe correlação linear
+  
+  $H_1:$ Existe correlação linear
+
+*Obs: essa hipótese para linearidade é específica para correlação de Pearson, dado que os outros métodos medem a correlação não linear também.*
+
+Selecionamos os mesmos exemplos da análise anterior para testar as hipóteses acima:
+
+```{r, echo=TRUE, fig.align='center'}
+# hp versus gear
+cor.test(mtcars$hp, mtcars$gear)
+
+# mpg versus drat
+cor.test(mtcars$wt, mtcars$hp)
+```
+
+Como nós podemos verificar, no exemplo acima, o coeficiente de correlação de Pearson para as variáveis `hp`e `gear` não é significativo ao nível de 95% de confiança, dado que o seu p-valor é 0,493 (>0,05), isso nos faz não rejeitar a hipóteses nula ($H_0$), em que afirma que não existe correlação entre as variáveis. Já  para as variáveis `wt` e `hp`, o coeficiente de correlação de Pearson é significativo ao nível de confianca de 95% (p-valor > 0,05), e isso nos faz afirmar que existe correlação entre as variáveis (rejeita a hipótese nula $H_0$).
+
+Porém, uma estratégia ótima para representar tanto o grau de correlação entre as variáveis quanto a significância desses coeficientes, se resolve com uma esta ferramenta visual bem bacana:
+
+
+```{r, echo=TRUE, fig.align='center', warning=FALSE, message=FALSE}
+# precisa do pacote rstatix
+p.mat <- mtcars %>% 
+  select(where(is.numeric)) %>%   
+    rstatix::cor_pmat() %>% as.data.frame()
+
+rownames(p.mat) <- p.mat$rowname
+p.mat <- p.mat[,-1]
+
+# precisa do pacote ggcorplot
+mtcars %>%
+  select(where(is.numeric)) %>% 
+    cor() %>%
+      ggcorrplot::ggcorrplot(hc.order = TRUE, 
+                             type = "lower", 
+                             lab = TRUE, 
+                             lab_size = 2.5,
+                             p.mat = p.mat,
+                             tl.cex = 6,
+                             method="circle", 
+                             colors = c("tomato2", "white", "springgreen3"), 
+                             title="Correlograma", 
+                             ggtheme=theme_bw, insig = "blank")
+
+```
+
+Agora, não só enxergarmos o grau de correlação de cada variável, como também quais os coeficientes são significantes, dado que os que não são, foram retirados da visualização.
+
+<br>
+
+  - **Dispersão**: O gráfico de dispersão é um dos mais famosos para visualizar a relação entre duas variáveis numéricas. Sendo assim, vamos selecionar algumas relações para visualizarmos de acordo com os coeficiente de correlação de Pearson e suas significâncias que foram observados anteriormente:
+
+```{r, echo=TRUE}
+
+iris %>% 
+  grafico_dispersao(x = Sepal.Length, y = Petal.Length, color = "red")
+
+```
